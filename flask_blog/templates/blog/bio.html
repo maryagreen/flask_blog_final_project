@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Author's Bio{% endblock %}
+
+{% block content %}
+
+<div class="row"> 
+    <div class="col-md-offset-3 col-md-6">
+    
+        <h3>{{author.fullname}}</h3>
+        
+      <div class="col-md-offset-3 col-md-6">
+        {% if author.image %}
+        
+        <img src="{{ author.imgsrc }}" height="300px" class="img-rounded"/>
+        {% endif %}
+        
+         {{ author.bio }}
+         <hr/><a href="{{ url_for('getblogforauthor',author_id=author.id)}}">Blog Index </a>
+           
+      </div>
+        
+    </div>
+</div>
+
+{% endblock %}
+ 
