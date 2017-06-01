@@ -188,16 +188,16 @@ def getblogforauthor(author_id):
        return redirect(url_for('blogindex',id=id) )
     else:
         return redirect(url_for('mainindex'))
-        
-@app.route('/comment/<int:post_id><string:username>', methods=('POST','GET'))  
+
+@app.route('/comment/<int:post_id>', methods=('POST','GET')) 
 @login_required
-def comment(post_id, username):
+def comment(post_id):
     if request.method == "POST":
         form = CommentForm(request.form)
         if form.validate_on_submit():
             comment = Comment(
             post_id,
-            form.username.data,
+            session['username'],
             form.body.data)
             db.session.add(comment)
             db.session.flush()
@@ -208,15 +208,14 @@ def comment(post_id, username):
                 return "Insert failed."
         else:
             print("not valid")
-            print(form.username)
-            #print(form.post_id)
             print(form.body)
             return "failed validation"
     else:        
         post=Post.query.filter_by(id = post_id).first()
         form = CommentForm()
         if post:
-            return render_template('/blog/comment.html', form=form, post=post, username=username)
+            #return render_template('/blog/comment.html', form=form, post=post, username=username, action="new")
+            return render_template('/blog/comment.html', form=form, post=post, action="new")
         else:
             return "Post not found"
     

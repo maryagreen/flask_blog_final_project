@@ -28,7 +28,5 @@ class PostForm(Form):
     
 class CommentForm(Form):
     post_id = HiddenField() 
-    #post_id = IntegerField('Post ID', validators=[validators.Required()])
-    username = StringField('User', validators=[validators.Required()])
     body = TextAreaField('Content', validators=[validators.Required()])
     
