@@ -14,8 +14,8 @@
         <div class="blog-list">
             {% for blog in blogs %}
             <div class="blog-item">
-                <h4><a href="{{ url_for('blogindex',id=blog.id) }}">{{blog.name}} - {{blog.id}} - {{blog.author}}</a> </h4> 
-                <div class="text-muted">Posted by <a href="#">{{blog.author.fullname}}</a> </div>
+                <h4><a href="{{ url_for('blogindex',id=blog.id) }}">{{blog.name}} - {{blog.id}} - {{blog.author.fullname}}</a> </h4> 
+                <div class="text-muted">Posted by <a href="{{url_for('bio', author_id=blog.admin)}}">{{blog.author.fullname}}</a> </div>
             </div>
             {% endfor %}
         </div>

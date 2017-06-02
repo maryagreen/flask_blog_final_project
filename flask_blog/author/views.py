@@ -55,14 +55,18 @@ def register():
         db.session.commit()
         return redirect(url_for('success'))
     return render_template('author/register.html', form=form, action="new")
-    
+
+@app.route('/success/<string:msg>')      
 @app.route('/success')    
-def success():
-    return "Author registered!"
+def success(msg):
+    if msg > '':
+        return msg
+    else:
+        return "Success!"
     
-@app.route('/resetpassword', methods=('GET', 'POST'))    
+@app.route('/resetpassword', methods=('GET', 'POST'))  
+#@login_required
 def resetpassword():
-    #This doesn't work. It tries to insert instead of update.
     form = RegisterForm()
     error = ""
     if form.validate_on_submit():
@@ -74,16 +78,30 @@ def resetpassword():
             hashed_password = bcrypt.hashpw(form.password.data, salt)
             author.password = hashed_password
             setattr(author, 'password', hashed_password)
-        #db.session.query(author).filter_by( author.username==form.username.data).update({'password':hashed_password])
-            #conn = engine.connect()
-            stmt = Author.update().\
-            values(password = hashed_password).\
-            where(Author.username == form.username.data)
-            db.session.execute(stmt)
-
             db.session.commit()
-            return redirect(url_for('success'))
-    return render_template('author/register.html', form=form,  action="edit") 
+            return redirect(url_for('success', msg="Password Reset"))
+    return render_template('author/register.html', form=form,  action="reset") 
+            
+    
+    
+@app.route('/editbio', methods=('GET', 'POST'))  
+@login_required
+def editbio():
+    form = RegisterForm()
+    error = ""
+    if form.validate_on_submit():
+        print("validated")
+        author = Author.query.filter_by(
+            username=form.username.data
+            ).first()
+        if author:
+            newbio = form.bio.data
+            if newbio > ' ':
+                setattr(author, 'bio', newbio)
+                db.session.commit()
+                return redirect(url_for('success', msg="Bio updated"))
+    print("invalid")            
+    return render_template('author/register.html', form=form,  action="edit")    
     
 @app.route('/logout')    
 def logout():

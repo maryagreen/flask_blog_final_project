@@ -13,14 +13,14 @@ POSTS_PER_PAGE=8
 @app.route('/index')
 @app.route('/index/<int:page>')
 def index(page=1):
-    blog = Blog.query.first()
-    if not blog:
-        return redirect(url_for('setup'))
-    posts=Post.query.filter_by(live=True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
-    return render_template('blog/index.html', blog=blog, posts=posts)  
-
-@app.route('/mainindex')
-def mainindex():
+#    blog = Blog.query.first()
+#    if not blog:
+#        return redirect(url_for('setup'))
+#    posts=Post.query.filter_by(live=True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
+#    return render_template('blog/index.html', blog=blog, posts=posts)  
+#
+#@app.route('/mainindex')
+#def mainindex():
     blogs = Blog.query.all()
     if blogs:
        return render_template('blog/mainindex.html', blogs=blogs) 
@@ -28,13 +28,15 @@ def mainindex():
         return redirect(url_for('setup'))
     
 @app.route('/blogindex/<int:id>')
-@app.route('/blogindex/<int:id><int:page>')
+@app.route('/blogindex/<int:id>/<int:page>')
 def blogindex(id, page=1):
-    #blog = Blog.query.filter_by(id=id).first()
-    blog = Blog.query.filter(Blog.id==id).first()
+    blog = Blog.query.filter_by(id=id).first()
+    #blog = Blog.query.filter(Blog.id==id).first()
     if not blog:
         return redirect(url_for('setup'))
-    posts=Post.query.filter_by(blog_id=id, live=True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
+    posts=Post.query.filter(Post.blog_id==id, Post.live==True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
+    #posts=Post.query.filter(blog_id=id, live=True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
+    
     return render_template('blog/blogindex.html', blog=blog, posts=posts)
  
 @app.route('/category/<int:id>')      
@@ -42,7 +44,7 @@ def category(id):
     category = Category.query.filter_by(id=id).first()
     if not category:
         return redirect(url_for('index'))
-    posts = Post.query.filter_by(category_id=id, live=True).order_by(Post.author_id.asc(),Post.publish_date.desc()).all()
+    posts = Post.query.filter(Post.category_id==id, Post.live==True).order_by(Post.author_id.asc(),Post.publish_date.desc()).all()
     if not posts:
        return redirect(url_for('index'))
     if len(posts) > 0:

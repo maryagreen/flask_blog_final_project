@@ -16,7 +16,7 @@ class RegisterForm(Form):
         validators.length(min=4, max=80)
         ])    
     confirm = PasswordField('Repeat Password')
-    
+    bio = StringField('Bio')
     
 class LoginForm(Form):
     username = StringField('Username', [
