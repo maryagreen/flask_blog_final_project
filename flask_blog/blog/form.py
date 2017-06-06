@@ -27,6 +27,6 @@ class PostForm(Form):
     new_category = StringField('New Category')
     
 class CommentForm(Form):
-    post_id = HiddenField() 
+    #post_id = HiddenField() 
     body = TextAreaField('Content', validators=[validators.Required()])
     
