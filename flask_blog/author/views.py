@@ -89,18 +89,34 @@ def resetpassword():
 def editbio():
     form = RegisterForm()
     error = ""
+    message = ""
+    datachanged = 0
     if form.validate_on_submit():
-        print("validated")
         author = Author.query.filter_by(
             username=form.username.data
             ).first()
         if author:
             newbio = form.bio.data
+            print("New bio ",newbio)
+            image = request.files.get('image')
+            print("image: ", image)
+            filename = None
+            try:
+                filename = uploaded_images.save(image)
+                setattr(author, 'image', filename)
+                datachanged = 1
+                print("Filename: ", filename)
+            except:
+                flash("The image was not uploaded.")
+            
             if newbio > ' ':
                 setattr(author, 'bio', newbio)
+                datachanged = 1
+            
+                
+            if datachanged == 1:
                 db.session.commit()
-                return redirect(url_for('success', msg="Bio updated"))
-    print("invalid")            
+                return redirect(url_for('success', msg="Author updated"))
     return render_template('author/register.html', form=form,  action="edit")    
     
 @app.route('/logout')    

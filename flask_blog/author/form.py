@@ -17,7 +17,10 @@ class RegisterForm(Form):
         ])    
     confirm = PasswordField('Repeat Password')
     bio = StringField('Bio')
-    
+    image = FileField('Image', validators=[
+        FileAllowed(['jpg','png'], 'Images only!')
+        ])
+        
 class LoginForm(Form):
     username = StringField('Username', [
         validators.Required(),

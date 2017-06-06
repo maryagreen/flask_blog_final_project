@@ -70,12 +70,22 @@ def setup():
     if form.validate_on_submit():
         salt = bcrypt.gensalt()
         hashed_password = bcrypt.hashpw(form.password.data, salt)
+        image = request.files.get('image')
+        filename = None
+        try:
+            print("Try filename")
+            filename = uploaded_images.save(image)
+            print("File Name: ", filename)
+        except:
+            flash("The image was not uploaded.")
         author = Author(
             form.fullname.data,
             form.email.data,
             form.username.data,
             hashed_password,
-            True
+            True,
+            form.bio.data,
+            filename
             )
         db.session.add(author)
         db.session.flush()
@@ -95,7 +105,7 @@ def setup():
         else:
             db.session.rollback()
             error = "Error creating blog"
-    return render_template('blog/setup.html', form=form, error=error)
+    return render_template('blog/setup.html', form=form, error=error, action= "new")
     
 @app.route('/post', methods=('GET', 'POST'))
 @author_required
@@ -104,8 +114,10 @@ def post():
     if form.validate_on_submit():
         image = request.files.get('image')
         filename = None
+        print("image: ", image)
         try:
             filename = uploaded_images.save(image)
+            print("filename: ", filename)
         except:
             flash("The image was not uploaded.")
         if form.new_category.data:
