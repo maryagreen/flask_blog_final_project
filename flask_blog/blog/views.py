@@ -235,14 +235,14 @@ def comment(post_id):
     
     return "exit comment function"    
             
-@app.route('/seecomments/<int:post_id>/<int:page>', methods=('POST','GET'))     
-def seecomments(post_id, page=1):
-#@app.route('/seecomments/<int:post_id>/<string:title>', methods=('POST','GET'))     
-#def seecomments(post_id, title):
+#@app.route('/seecomments/<int:post_id>/<int:page>', methods=('POST','GET'))     
+#def seecomments(post_id, page=1):
+@app.route('/seecomments/<int:post_id>/<int:page><title>', methods=('POST','GET'))     
+def seecomments(post_id, page, title):
     comments=Comment.query.filter(Comment.post_id==post_id).order_by(Comment.id.desc()).paginate(page, POSTS_PER_PAGE, False)
     #comments=Comment.query.filter(Comment.post_id==post_id).order_by(Comment.id.desc())
     if comments:
-        return render_template('/blog/seecomments.html',comments=comments, post_id=post_id, page=page)
+        return render_template('/blog/seecomments.html',comments=comments, post_id=post_id, page=page, title=title)
         #return render_template('/blog/seecomments.html',comments=comments, post_id=post_id)
     else:
         return "Comments not found"

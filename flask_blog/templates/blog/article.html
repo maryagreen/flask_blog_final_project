@@ -19,7 +19,7 @@
         <a href="{{url_for('comment',post_id=post.id, username=username)}}">Comment</a> - 
         {% endif %}
     {% endif %}
-     <a href="{{url_for('seecomments',post_id=post.id, page=1)}}">See Comments</a> - 
+     <a href="{{url_for('seecomments',post_id=post.id, page=1, title=post.title)}}">See Comments</a> - 
     {{ post.body|markdown }}
     
     <hr />
