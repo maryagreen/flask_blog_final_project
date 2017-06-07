@@ -14,7 +14,7 @@
             
           <form method= "POST","GET" action="{{ url_for('comment', post_id=post.id) }}" enctype="multipart/form-data" role ="form"> 
  {{ form.hidden_tag() }}
-   <input type="hidden" name="post_id" value=post.id>
+    <input type="hidden" name="post_id" value=post.id>
    {{ render_field(form.body, class='form-control', rows=10) }}
    
    {% if action == "new" %}

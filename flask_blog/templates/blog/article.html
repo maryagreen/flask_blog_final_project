@@ -16,11 +16,10 @@
     <a href="{{url_for('delete',post_id=post.id)}}">Delete</a>
     {% else %}
         {% if username > '' %}
-         
         <a href="{{url_for('comment',post_id=post.id, username=username)}}">Comment</a> - 
         {% endif %}
     {% endif %}
-    
+     <a href="{{url_for('seecomments',post_id=post.id, page=1)}}">See Comments</a> - 
     {{ post.body|markdown }}
     
     <hr />

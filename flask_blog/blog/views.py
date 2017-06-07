@@ -235,3 +235,23 @@ def comment(post_id):
     
     return "exit comment function"    
             
+@app.route('/seecomments/<int:post_id>/<int:page>', methods=('POST','GET'))     
+def seecomments(post_id, page=1):
+#@app.route('/seecomments/<int:post_id>/<string:title>', methods=('POST','GET'))     
+#def seecomments(post_id, title):
+    comments=Comment.query.filter(Comment.post_id==post_id).order_by(Comment.id.desc()).paginate(page, POSTS_PER_PAGE, False)
+    #comments=Comment.query.filter(Comment.post_id==post_id).order_by(Comment.id.desc())
+    if comments:
+        return render_template('/blog/seecomments.html',comments=comments, post_id=post_id, page=page)
+        #return render_template('/blog/seecomments.html',comments=comments, post_id=post_id)
+    else:
+        return "Comments not found"
+        
+@app.route('/getslug/<int:id>')   
+def getslug(id):
+    post=Post.query.filter_by(id = id).first()
+    if session.get('username') is None:
+        username = ''
+    else:
+        username = session['username']
+    return render_template('/blog/article.html', post=post, username=username)
