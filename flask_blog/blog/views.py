@@ -151,8 +151,15 @@ def article(slug):
         username = ''
     else:
         username = session['username']
-    return render_template('/blog/article.html', post=post, username=username)
-    
+    stmt="select count(*) from comment where post_id = :postID ;"
+    #commentCtList = db.session.execute(stmt, (post.id, ) )
+    result = db.session.execute(stmt, {'postID': post.id})
+    commentCtList = result.fetchone()
+    commentCt = commentCtList[0]
+    comments=Comment.query.filter(Comment.post_id==post.id).order_by(Comment.id.desc()) 
+    return render_template('/blog/article.html', post=post, username=username, cmtct=commentCt)
+    # return render_template('/blog/article.html', post=post, username=username, comments=comments, cmtct=commentCt)
+
 @app.route('/delete/<int:post_id>')    
 @author_required
 def delete(post_id):
@@ -235,8 +242,6 @@ def comment(post_id):
     
     return "exit comment function"    
             
-#@app.route('/seecomments/<int:post_id>/<int:page>', methods=('POST','GET'))     
-#def seecomments(post_id, page=1):
 @app.route('/seecomments/<int:post_id>/<int:page><title>', methods=('POST','GET'))     
 def seecomments(post_id, page, title):
     comments=Comment.query.filter(Comment.post_id==post_id).order_by(Comment.id.desc()).paginate(page, POSTS_PER_PAGE, False)
@@ -250,8 +255,6 @@ def seecomments(post_id, page, title):
 @app.route('/getslug/<int:id>')   
 def getslug(id):
     post=Post.query.filter_by(id = id).first()
-    if session.get('username') is None:
-        username = ''
-    else:
-        username = session['username']
-    return render_template('/blog/article.html', post=post, username=username)
+    #if session.get('username') is None:
+    #return render_template('/blog/article.html', post=post, username=username)
+    return redirect(url_for('article', slug=post.slug))

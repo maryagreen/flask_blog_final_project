@@ -19,11 +19,13 @@
         <a href="{{url_for('comment',post_id=post.id, username=username)}}">Comment</a> - 
         {% endif %}
     {% endif %}
-     <a href="{{url_for('seecomments',post_id=post.id, page=1, title=post.title)}}">See Comments</a> - 
+    {% if cmtct > 0 %}
+         <a href="{{url_for('seecomments',post_id=post.id, title=post.title, page=1)}}">See Comments</a> - 
+    {% endif %}     
     {{ post.body|markdown }}
     
     <hr />
-    
+        
     <div class="text-muted">Posted by <a href="{{url_for('bio', author_id=post.author_id)}}">{{ post.author.fullname }}</a>
     on {{ post.publish_date.strftime('%Y-%m-%d') }} in <a href="{{url_for('category',id=post.category_id)}}">{{ post.category.name }}</a></div>
     </div>
