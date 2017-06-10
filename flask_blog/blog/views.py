@@ -13,14 +13,6 @@ POSTS_PER_PAGE=8
 @app.route('/index')
 @app.route('/index/<int:page>')
 def index(page=1):
-#    blog = Blog.query.first()
-#    if not blog:
-#        return redirect(url_for('setup'))
-#    posts=Post.query.filter_by(live=True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
-#    return render_template('blog/index.html', blog=blog, posts=posts)  
-#
-#@app.route('/mainindex')
-#def mainindex():
     blogs = Blog.query.all()
     if blogs:
        return render_template('blog/mainindex.html', blogs=blogs) 
@@ -35,8 +27,7 @@ def blogindex(id, page=1):
     if not blog:
         return redirect(url_for('setup'))
     posts=Post.query.filter(Post.blog_id==id, Post.live==True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
-    #posts=Post.query.filter(blog_id=id, live=True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
-    
+    #posts=Post.query.filter_by(blog_id=id, live=True).order_by(Post.publish_date.desc()).paginate(page, POSTS_PER_PAGE, False)
     return render_template('blog/blogindex.html', blog=blog, posts=posts)
  
 @app.route('/category/<int:id>')      
@@ -152,13 +143,13 @@ def article(slug):
     else:
         username = session['username']
     stmt="select count(*) from comment where post_id = :postID ;"
-    #commentCtList = db.session.execute(stmt, (post.id, ) )
+    #commentCtList = db.session.execute(stmt, (post.id, ) ) #does not work
     result = db.session.execute(stmt, {'postID': post.id})
     commentCtList = result.fetchone()
     commentCt = commentCtList[0]
-    comments=Comment.query.filter(Comment.post_id==post.id).order_by(Comment.id.desc()) 
-    return render_template('/blog/article.html', post=post, username=username, cmtct=commentCt)
-    # return render_template('/blog/article.html', post=post, username=username, comments=comments, cmtct=commentCt)
+    comments=Comment.query.filter(Comment.post_id==post.id).order_by(Comment.id.desc()).paginate(1, POSTS_PER_PAGE, False)
+    print("Comments: ", comments)
+    return render_template('/blog/article.html', post=post, username=username, comments=comments, cmtct=commentCt)
 
 @app.route('/delete/<int:post_id>')    
 @author_required
@@ -224,14 +215,23 @@ def comment(post_id):
             db.session.flush()
             db.session.commit()
             if comment.id:
-                return " Success! Comment added"
+                return redirect(url_for('getslug', id=post_id))
             else:
-                return "Insert failed."
+                flash("Insert failed.")
+                post=Post.query.filter_by(id = post_id).first()
+                if post:
+                    return render_template('/blog/comment.html', form=form, post=post, action="new")
+                else: 
+                    return "Insert failed."
         else:
             print("not valid")
-            print(form.body)
-            return "failed validation"
-    else:        
+            flash("failed validation")
+            post=Post.query.filter_by(id = post_id).first()
+            if post:
+                return render_template('/blog/comment.html', form=form, post=post, action="new")
+            else:   
+                return "failed validation"
+    else:   
         post=Post.query.filter_by(id = post_id).first()
         form = CommentForm()
         if post:
@@ -240,17 +240,7 @@ def comment(post_id):
         else:
             return "Post not found"
     
-    return "exit comment function"    
-            
-@app.route('/seecomments/<int:post_id>/<int:page><title>', methods=('POST','GET'))     
-def seecomments(post_id, page, title):
-    comments=Comment.query.filter(Comment.post_id==post_id).order_by(Comment.id.desc()).paginate(page, POSTS_PER_PAGE, False)
-    #comments=Comment.query.filter(Comment.post_id==post_id).order_by(Comment.id.desc())
-    if comments:
-        return render_template('/blog/seecomments.html',comments=comments, post_id=post_id, page=page, title=title)
-        #return render_template('/blog/seecomments.html',comments=comments, post_id=post_id)
-    else:
-        return "Comments not found"
+    #return "exit comment function"    
         
 @app.route('/getslug/<int:id>')   
 def getslug(id):

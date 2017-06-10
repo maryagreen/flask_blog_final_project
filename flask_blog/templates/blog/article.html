@@ -16,12 +16,9 @@
     <a href="{{url_for('delete',post_id=post.id)}}">Delete</a>
     {% else %}
         {% if username > '' %}
-        <a href="{{url_for('comment',post_id=post.id, username=username)}}">Comment</a> - 
+        <a href="{{url_for('comment',post_id=post.id, username=username)}}">Make a Comment</a> 
         {% endif %}
     {% endif %}
-    {% if cmtct > 0 %}
-         <a href="{{url_for('seecomments',post_id=post.id, title=post.title, page=1)}}">See Comments</a> - 
-    {% endif %}     
     {{ post.body|markdown }}
     
     <hr />
@@ -30,4 +27,23 @@
     on {{ post.publish_date.strftime('%Y-%m-%d') }} in <a href="{{url_for('category',id=post.category_id)}}">{{ post.category.name }}</a></div>
     </div>
 </div>
+<div>
+    {% if cmtct > 0 %}  
+    <div class="row" ><h1>Comments:</h1></div> 
+    <div class="row">
+    <div class="comments-list">
+            {% for comment in comments.items %}
+            <div class="row comment-item">
+                <div class="col-md-9">
+                     {{ comment.body|markdown }}
+                </div>
+                <div class="col-md_3">
+                    Posted by {{comment.username}}
+                </div>
+            </div>
+            {% endfor %}
+    </div>
+    </div>
+    {% endif %}   
+</div>    
 {% endblock %}
