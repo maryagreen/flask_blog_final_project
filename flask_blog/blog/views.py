@@ -205,8 +205,7 @@ def comment(post_id):
             comment = Comment(
             post_id,
             session['username'],
-            form.body.data,
-            None)
+            form.body.data) #,            None)
             db.session.add(comment)
             db.session.flush()
             db.session.commit()

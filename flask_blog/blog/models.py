@@ -68,7 +68,7 @@ class Comment(db.Model):
     entrytime = db.Column(db.DateTime)
     post= db.relationship('Post', backref=db.backref('posts',lazy='dynamic'))
     
-    def __init__(self, post_id, username, body, entrytime):
+    def __init__(self, post_id, username, body, entrytime=None):
         self.post_id = post_id
         self.username = username
         if body is None:
