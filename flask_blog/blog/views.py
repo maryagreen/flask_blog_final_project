@@ -116,13 +116,8 @@ def post():
             db.session.add(new_category)
             db.session.flush()
             category = new_category
-        #elif form.category.data:
-        #    category_id = form.category.get_pk(form.category.data)
-        #    category = Category.query.filter_by(id=category_id).first()
         else:
             category = form.category.data    
-            #category = None
-        #blog = Blog.query.first()
         author = Author.query.filter_by(username=session['username']).first()
         author_id = author.id
         blog = Blog.query.filter_by(admin=author_id).first()
@@ -210,7 +205,8 @@ def comment(post_id):
             comment = Comment(
             post_id,
             session['username'],
-            form.body.data)
+            form.body.data,
+            None)
             db.session.add(comment)
             db.session.flush()
             db.session.commit()

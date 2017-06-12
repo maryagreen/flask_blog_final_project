@@ -65,14 +65,19 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     username = db.Column(db.String(255))
     body = db.Column(db.Text)
+    entrytime = db.Column(db.DateTime)
     post= db.relationship('Post', backref=db.backref('posts',lazy='dynamic'))
     
-    def __init__(self, post_id, username, body):
+    def __init__(self, post_id, username, body, entrytime):
         self.post_id = post_id
         self.username = username
         if body is None:
             self.body = "" 
         else:    
             self.body = body
+        if entrytime is None:
+            self.entrytime = datetime.utcnow()
+        else:
+            self.entrytime = entrytime    
     def __repr__(self):
         return str(self.body)
