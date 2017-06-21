@@ -3,6 +3,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.migrate import Migrate
 from flaskext.markdown import Markdown
 from flask_uploads import UploadSet, configure_uploads, IMAGES
+#import pdb
 
 app = Flask(__name__)
 app.config.from_object('settings')

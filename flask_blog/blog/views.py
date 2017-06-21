@@ -7,6 +7,8 @@ from blog.models import Blog, Category, Post, Comment
 from author.decorators import login_required, author_required
 import bcrypt
 from slugify import slugify
+#import pdb
+
 POSTS_PER_PAGE=8
 @app.route('/')
 
@@ -61,14 +63,21 @@ def setup():
     if form.validate_on_submit():
         salt = bcrypt.gensalt()
         hashed_password = bcrypt.hashpw(form.password.data, salt)
+        if request.method == "POST":
+            print("method is post")
+        else:
+            print("method is not post")
+        #image = request.files.get('image')
         image = request.files.get('image')
+        print("Image: ", image)
         filename = None
         try:
-            print("Try filename")
             filename = uploaded_images.save(image)
+            print("Try filename")
             print("File Name: ", filename)
         except:
             flash("The image was not uploaded.")
+            print("The image was not uploaded.")
         author = Author(
             form.fullname.data,
             form.email.data,
@@ -103,6 +112,7 @@ def setup():
 def post():
     form = PostForm()
     if form.validate_on_submit():
+        #pdb.set_trace()
         image = request.files.get('image')
         filename = None
         print("image: ", image)

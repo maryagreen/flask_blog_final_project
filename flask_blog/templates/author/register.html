@@ -16,13 +16,13 @@
        
         
         {% from "_formhelpers.html" import render_field %}
-        
+        {% include '_flashmessages.html' %}
         {% if action == "new" %}
-        <form method="POST" action="{{url_for('register') }}" role="form">
+        <form method="POST" action="{{url_for('register') }}" enctype="multipart/form-data" role="form">
         {% elif action == "edit" %}
-        <form method="POST" action="{{url_for('editbio') }}" role="form">
+        <form method="POST" action="{{url_for('editbio') }}" enctype="multipart/form-data" role="form">
         {% else %}
-        <form method="POST" action="{{url_for('resetpassword') }}" role="form">
+        <form method="POST" action="{{url_for('resetpassword') }}" enctype="multipart/form-data" role="form">
         {% endif %}    
             
             {{ form.hidden_tag() }}

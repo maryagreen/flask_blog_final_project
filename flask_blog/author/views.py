@@ -5,6 +5,7 @@ from author.form import RegisterForm, LoginForm
 from author.models import Author
 from author.decorators import login_required
 import bcrypt
+#import pdb
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
@@ -92,12 +93,14 @@ def editbio():
     message = ""
     datachanged = 0
     if form.validate_on_submit():
+        print("Method is ", request.method)
         author = Author.query.filter_by(
             username=form.username.data
             ).first()
         if author:
             newbio = form.bio.data
             print("New bio ",newbio)
+            #pdb.set_trace()
             image = request.files.get('image')
             print("image: ", image)
             filename = None
@@ -108,7 +111,7 @@ def editbio():
                 print("Filename: ", filename)
             except:
                 flash("The image was not uploaded.")
-            
+                print("The image was not uploaded.")
             if newbio > ' ':
                 setattr(author, 'bio', newbio)
                 datachanged = 1
