@@ -92,35 +92,47 @@ def editbio():
     error = ""
     message = ""
     datachanged = 0
+    #pdb.set_trace()
     if form.validate_on_submit():
-        print("Method is ", request.method)
-        author = Author.query.filter_by(
-            username=form.username.data
-            ).first()
-        if author:
-            newbio = form.bio.data
-            print("New bio ",newbio)
-            #pdb.set_trace()
-            image = request.files.get('image')
-            print("image: ", image)
-            filename = None
-            try:
-                filename = uploaded_images.save(image)
-                setattr(author, 'image', filename)
-                datachanged = 1
-                print("Filename: ", filename)
-            except:
-                flash("The image was not uploaded.")
-                print("The image was not uploaded.")
-            if newbio > ' ':
-                setattr(author, 'bio', newbio)
-                datachanged = 1
-            
-                
-            if datachanged == 1:
-                db.session.commit()
-                return redirect(url_for('success', msg="Author updated"))
-    return render_template('author/register.html', form=form,  action="edit")    
+        if session['username'] == form.username:
+            author = Author.query.filter_by(
+                username=form.username.data
+                ).first()
+            if author:
+                newbio = form.bio.data
+                image = request.files.get('image')
+                filename = None
+                try:
+                    filename = uploaded_images.save(image)
+                    setattr(author, 'image', filename)
+                    datachanged = 1
+                except:
+                    flash("The image was not uploaded.")
+                    print("The image was not uploaded.")
+                if newbio > ' ':
+                    setattr(author, 'bio', newbio)
+                    datachanged = 1
+                if datachanged == 1:
+                    db.session.commit()
+                    return redirect(url_for('success', msg="Author updated"))
+            else:
+                #This will never execute, because you must be logged in to use this function,
+                # and if you have a login, you are in the author table, even if is_author is false.
+                return "You must be an author to edit your bio."
+        else:  
+            return "You may only edit your own information."
+           # return url_for('index')
+    else:            
+        #username=session['username']
+        #author = Author.query.filter_by(username=session['username']).first()
+        #form.fullname = author.fullname
+        #form.email = author.email
+        #form.username = author.username
+        #form.password = author.password
+        #form.confirm = author.password
+        #form.bio = author.bio
+        #form.image = author.image
+        return render_template('author/register.html', form=form,  action="edit")    
     
 @app.route('/logout')    
 def logout():
